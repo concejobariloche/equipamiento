@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inventario y Equipamiento - Concejo Municipal</title>
+  <title>Inventario y Patrimoniales - Concejo Municipal</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome Icons -->
@@ -16,20 +16,26 @@
   <!-- CONTENEDOR PRINCIPAL -->
   <div class="max-w-7xl mx-auto px-4 py-8 space-y-6">
     
-    <!-- ENCABEZADO Y ACCESO ADMIN -->
-    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-      <div class="space-y-1 text-center sm:text-left">
-        <h2 class="text-xl sm:text-2xl font-black text-slate-950 tracking-tight uppercase flex items-center justify-center sm:justify-start gap-2.5">
-          <i class="fa-solid fa-computer text-indigo-600"></i>
+    <!-- ENCABEZADO Y SELECTOR DE VISTAS / ADMIN -->
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+      <div class="space-y-1 text-center md:text-left">
+        <h2 class="text-xl sm:text-2xl font-black text-slate-950 tracking-tight uppercase flex items-center justify-center md:justify-start gap-2.5">
+          <i class="fa-solid fa-building-columns text-indigo-600"></i>
           <span>INVENTARIO Y EQUIPAMIENTO</span>
         </h2>
         <p class="text-xs sm:text-sm text-slate-500 font-medium">
-          Sistemas e Informática del Concejo Municipal
+          Sistemas e Informática - Concejo Municipal
         </p>
       </div>
 
-      <!-- Botón de Acceso Administrador (Nube) -->
-      <div>
+      <!-- BOTONES DE PESTAÑAS Y ACCESO ADMIN -->
+      <div class="flex flex-wrap items-center justify-center gap-2.5">
+        <button onclick="switchView('equipamiento')" id="tabBtnEquipamiento" class="px-4 py-2.5 bg-indigo-600 text-white text-xs font-bold rounded-xl transition-colors shadow-sm flex items-center gap-2">
+          <i class="fa-solid fa-computer"></i> Equipos
+        </button>
+        <button onclick="switchView('patrimoniales')" id="tabBtnPatrimoniales" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors flex items-center gap-2">
+          <i class="fa-solid fa-boxes-stacked"></i> Patrimoniales
+        </button>
         <button onclick="abrirModalAdmin()" id="btnAdminAcceso" class="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition-colors flex items-center gap-2 shadow-sm">
           <i class="fa-solid fa-lock text-indigo-400"></i>
           <span id="textoAdminBtn">Modo Visualizador</span>
@@ -37,198 +43,30 @@
       </div>
     </div>
 
-    <!-- BARRA DE BÚSQUEDA Y FILTROS -->
-    <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-        
-        <!-- Buscador general -->
-        <div class="relative w-full sm:w-96">
-          <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
-            <i class="fa-solid fa-magnifying-glass"></i>
-          </span>
-          <input 
-            type="text" 
-            id="eqSearchInput" 
-            oninput="renderEquipamientoTable()" 
-            placeholder="Buscar descripción, usuario, N° patrimonial..." 
-            class="w-full bg-slate-50 border border-slate-300 rounded-xl pl-10 pr-4 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none transition-all"
-          />
+    <!-- ================= VISTA EQUIPAMIENTO ================= -->
+    <div id="viewEquipamiento" class="space-y-6">
+      <!-- BARRA DE BÚSQUEDA Y FILTROS -->
+      <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div class="relative w-full sm:w-96">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400"><i class="fa-solid fa-magnifying-glass"></i></span>
+            <input type="text" id="eqSearchInput" oninput="renderEquipamientoTable()" placeholder="Buscar descripción, usuario, N° patrimonial..." class="w-full bg-slate-50 border border-slate-300 rounded-xl pl-10 pr-4 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none transition-all" />
+          </div>
+          <div id="eqAdminActionContainer" class="w-full sm:w-auto flex justify-end"></div>
         </div>
 
-        <!-- Botón Nuevo Equipo (Se inyecta si es Admin) -->
-        <div id="eqAdminActionContainer" class="w-full sm:w-auto flex justify-end"></div>
-      </div>
-
-      <!-- FILTROS AVANZADOS COMBINADOS -->
-      <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-3 border-t border-slate-100">
-        <div>
-          <label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Filtrar por Área</label>
-          <select id="filterArea" onchange="renderEquipamientoTable()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-700 outline-none">
-            <option value="">Todas las Áreas</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Filtrar por Tipo</label>
-          <select id="filterTipo" onchange="renderEquipamientoTable()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-700 outline-none">
-            <option value="">Todos los Tipos</option>
-            <option value="PC">PC</option>
-            <option value="Monitor">Monitor</option>
-            <option value="Impresora">Impresora</option>
-            <option value="Periferico">Periférico</option>
-            <option value="UPS">UPS</option>
-            <option value="Otros">Otros</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Filtrar por Condición</label>
-          <select id="filterCondicion" onchange="renderEquipamientoTable()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-700 outline-none">
-            <option value="">Todas</option>
-            <option value="Nuevo">Nuevo</option>
-            <option value="Antiguo">Antiguo</option>
-            <option value="Actualizado">Actualizado</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Actualizable</label>
-          <select id="filterActualizable" onchange="renderEquipamientoTable()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-700 outline-none">
-            <option value="">Todos</option>
-            <option value="Si">Sí</option>
-            <option value="No">No</option>
-            <option value="Puede esperar">Puede esperar</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <!-- TABLA DE EQUIPAMIENTO -->
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-      <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
-          <thead class="bg-slate-900 text-slate-200 font-semibold uppercase text-xs tracking-wider">
-            <tr>
-              <th class="py-3.5 px-4 text-center">Área</th>
-              <th class="py-3.5 px-4 text-center">Descripción</th>
-              <th class="py-3.5 px-4 text-center">Propietario</th>
-              <th class="py-3.5 px-4 text-center">N° Patrimonial</th>
-              <th class="py-3.5 px-4 text-center">Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="equipamientoTableBody" class="divide-y divide-slate-100 text-sm">
-            <!-- Dinámico -->
-          </tbody>
-        </table>
-      </div>
-      
-      <!-- Footer / Contador -->
-      <div class="bg-slate-50 px-6 py-3.5 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500 font-medium">
-        <span>Mostrando <strong id="eqCount" class="text-indigo-600">0</strong> equipos registrados</span>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- MODAL DETALLE DE EQUIPO -->
-  <div id="detailEqModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-xl overflow-hidden border border-slate-200">
-      <div class="bg-slate-900 px-6 py-4 flex items-center justify-between text-white">
-        <h3 class="font-bold text-base flex items-center gap-2">
-          <i class="fa-solid fa-circle-info text-indigo-400"></i> Detalle del Equipo
-        </h3>
-        <button onclick="document.getElementById('detailEqModal').classList.add('hidden')" class="text-slate-400 hover:text-white transition-colors">
-          <i class="fa-solid fa-xmark text-lg"></i>
-        </button>
-      </div>
-      <div class="p-6 space-y-4 text-slate-700 text-sm">
-        <div class="grid grid-cols-2 gap-4 bg-slate-50 p-3.5 rounded-xl border border-slate-100">
-          <div><strong class="text-[10px] text-slate-400 block uppercase tracking-wider">Área:</strong> <span id="detArea" class="font-semibold text-slate-800">-</span></div>
-          <div><strong class="text-[10px] text-slate-400 block uppercase tracking-wider">Tipo:</strong> <span id="detTipo" class="font-semibold text-slate-800">-</span></div>
-        </div>
-        <div>
-          <strong class="text-[10px] text-slate-400 block uppercase tracking-wider mb-1">Descripción:</strong> 
-          <p id="detDescripcion" class="font-medium text-base text-slate-900 bg-slate-50 p-3.5 rounded-xl border border-slate-100">-</p>
-        </div>
-        <div class="grid grid-cols-2 gap-4 bg-slate-50 p-3.5 rounded-xl border border-slate-100">
-          <div><strong class="text-[10px] text-slate-400 block uppercase tracking-wider">Propietario:</strong> <span id="detPropietario" class="font-medium text-slate-800">-</span></div>
-          <div><strong class="text-[10px] text-slate-400 block uppercase tracking-wider">N° Patrimonial:</strong> <span id="detPatrimonial" class="font-mono font-semibold text-indigo-600">-</span></div>
-        </div>
-        <div class="grid grid-cols-3 gap-2 bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-center">
-          <div><strong class="text-[9px] text-slate-400 block uppercase tracking-wider">Condición:</strong> <span id="detCondicion" class="font-bold text-slate-700">-</span></div>
-          <div><strong class="text-[9px] text-slate-400 block uppercase tracking-wider">Actualizable:</strong> <span id="detActualizable" class="font-bold text-slate-700">-</span></div>
-          <div><strong class="text-[9px] text-slate-400 block uppercase tracking-wider">Usuario:</strong> <span id="detUsuario" class="font-bold text-indigo-600">-</span></div>
-        </div>
-        <div>
-          <strong class="text-[10px] text-slate-400 block uppercase tracking-wider mb-1">Notas / Observaciones:</strong> 
-          <p id="detNotas" class="text-slate-600 bg-slate-50 p-3.5 rounded-xl border border-slate-100 italic">-</p>
-        </div>
-      </div>
-      <div class="bg-slate-50 px-6 py-3.5 border-t border-slate-100 flex justify-end">
-        <button onclick="document.getElementById('detailEqModal').classList.add('hidden')" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold shadow-sm transition-colors">Cerrar</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL DE ACCESO ADMINISTRADOR -->
-  <div id="modalPasswordAdmin" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden border border-slate-200">
-      <div class="bg-slate-900 px-6 py-4 flex items-center justify-between text-white">
-        <h3 class="font-bold text-sm tracking-wide uppercase flex items-center gap-2">
-          <i class="fa-solid fa-shield-halved text-indigo-400"></i> Acceso Administrador
-        </h3>
-        <button onclick="cerrarModalAdmin()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-      </div>
-      <div class="p-6 space-y-4">
-        <p class="text-xs text-slate-500">Ingrese la contraseña de administración alojada en Supabase para habilitar las funciones de edición.</p>
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Contraseña</label>
-          <input 
-            type="password" 
-            id="inputPasswordAdmin" 
-            placeholder="••••••••" 
-            class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none"
-            onkeydown="if(event.key === 'Enter') verificarPasswordAdminSupabase()"
-          />
-          <p id="errorPasswordMsg" class="text-rose-500 text-xs mt-1.5 hidden font-medium">Contraseña incorrecta.</p>
-        </div>
-      </div>
-      <div class="bg-slate-50 px-6 py-3.5 border-t border-slate-100 flex justify-end gap-2">
-        <button onclick="cerrarModalAdmin()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold rounded-xl transition-colors">Cancelar</button>
-        <button onclick="verificarPasswordAdminSupabase()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-colors">Ingresar</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ================= MODAL CREAR / EDITAR EQUIPO ================= -->
-<div id="eqFormModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-  <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden border border-slate-200 transform transition-all">
-    
-    <!-- Header del Modal -->
-    <div class="bg-slate-900 px-6 py-4 flex items-center justify-between text-white">
-      <h3 id="eqModalTitle" class="font-bold text-base flex items-center gap-2">
-        <i class="fa-solid fa-computer text-indigo-400"></i> <span>Nuevo Equipo</span>
-      </h3>
-      <button onclick="cerrarEquipamientoModal()" class="text-slate-400 hover:text-white transition-colors">
-        <i class="fa-solid fa-xmark text-lg"></i>
-      </button>
-    </div>
-
-    <!-- Formulario -->
-    <form id="eqForm" onsubmit="saveEquipamiento(event)">
-      <input type="hidden" id="editEqId">
-      
-      <div class="p-6 space-y-4 text-slate-700 text-sm max-h-[75vh] overflow-y-auto">
-        
-        <!-- Fila 1: Área y Tipo -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- FILTROS AVANZADOS -->
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-3 border-t border-slate-100">
           <div>
-  <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Área *</label>
-  <select id="eqArea" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
-    <option value="">Seleccionar Área...</option>
-    <!-- Se puebla dinámicamente o puedes poner las opciones estáticas aquí -->
-  </select>
-</div>
+            <label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Filtrar por Área</label>
+            <select id="filterArea" onchange="renderEquipamientoTable()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-700 outline-none">
+              <option value="">Todas las Áreas</option>
+            </select>
+          </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Tipo de Equipo *</label>
-            <select id="eqTipo" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
+            <label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Filtrar por Tipo</label>
+            <select id="filterTipo" onchange="renderEquipamientoTable()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-700 outline-none">
+              <option value="">Todos los Tipos</option>
               <option value="PC">PC</option>
               <option value="Monitor">Monitor</option>
               <option value="Impresora">Impresora</option>
@@ -237,78 +75,257 @@
               <option value="Otros">Otros</option>
             </select>
           </div>
-        </div>
-
-        <!-- Descripción -->
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Descripción *</label>
-          <input type="text" id="eqDescripcion" required placeholder="Ej: PC Escritorio Intel Core i5 / Monitor 24 pulgadas" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
-        </div>
-
-        <!-- Fila 2: Propietario y N° Patrimonial -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Propietario (opcional)</label>
-            <input type="text" id="eqPropietario" placeholder="Ej: Concejal / Área / Municipio" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">N° Patrimonial (opcional)</label>
-            <input type="text" id="eqPatrimonial" placeholder="Ej: PAT-00412" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
-          </div>
-        </div>
-
-        <!-- Fila 3: Condición y Actualizable -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Condición</label>
-            <select id="eqCondicion" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
+            <label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Filtrar por Condición</label>
+            <select id="filterCondicion" onchange="renderEquipamientoTable()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-700 outline-none">
+              <option value="">Todas</option>
               <option value="Nuevo">Nuevo</option>
               <option value="Antiguo">Antiguo</option>
               <option value="Actualizado">Actualizado</option>
             </select>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Actualizable</label>
-            <select id="eqActualizable" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
+            <label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Actualizable</label>
+            <select id="filterActualizable" onchange="renderEquipamientoTable()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-700 outline-none">
+              <option value="">Todos</option>
               <option value="Si">Sí</option>
               <option value="No">No</option>
               <option value="Puede esperar">Puede esperar</option>
             </select>
           </div>
         </div>
-
-        <!-- Usuario / Nombre de equipo -->
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Usuario / Nombre de equipo (opcional)</label>
-          <input type="text" id="eqUsuario" placeholder="Ej: Juan Pérez / PC-LEGAJO-12" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
-        </div>
-
-        <!-- Notas -->
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Notas u Observaciones (opcional)</label>
-          <textarea id="eqNotas" rows="2" placeholder="Detalles técnicos adicionales..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none"></textarea>
-        </div>
-
       </div>
 
-      <!-- Footer / Botones -->
-      <div class="bg-slate-50 px-6 py-3.5 border-t border-slate-100 flex justify-end gap-2">
-        <button type="button" onclick="cerrarEquipamientoModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold rounded-xl transition-colors">Cancelar</button>
-        <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-colors">Guardar Equipo</button>
+      <!-- TABLA EQUIPAMIENTO -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="bg-slate-50 px-6 py-3.5 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500 font-medium">
+          <span>Mostrando <strong id="eqCount" class="text-indigo-600">0</strong> equipos registrados</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-900 text-slate-200 font-semibold uppercase text-xs tracking-wider">
+              <tr>
+                <th class="py-3.5 px-4 text-center">Área</th>
+                <th class="py-3.5 px-4 text-center">Descripción</th>
+                <th class="py-3.5 px-4 text-center">Propietario</th>
+                <th class="py-3.5 px-4 text-center">N° Patrimonial</th>
+                <th class="py-3.5 px-4 text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="equipamientoTableBody" class="divide-y divide-slate-100 text-sm"></tbody>
+          </table>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- ================= VISTA PATRIMONIALES ================= -->
+    <div id="viewPatrimoniales" class="hidden space-y-6">
+      <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="relative w-full sm:w-96">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400"><i class="fa-solid fa-magnifying-glass"></i></span>
+          <input type="text" id="patSearchInput" oninput="renderPatrimonialesTable()" placeholder="Buscar por descripción, número o detalles..." class="w-full bg-slate-50 border border-slate-300 rounded-xl pl-10 pr-4 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none transition-all" />
+        </div>
+        <div id="patAdminActionContainer" class="w-full sm:w-auto flex justify-end"></div>
       </div>
 
-    </form>
+      <!-- TABLA PATRIMONIALES -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="bg-slate-50 px-6 py-3.5 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500 font-medium">
+          <span>Mostrando <strong id="patCount" class="text-indigo-600">0</strong> bienes patrimoniales</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-900 text-slate-200 font-semibold uppercase text-xs tracking-wider">
+              <tr>
+                <th class="py-3.5 px-4 text-center">N° Patrimonial</th>
+                <th class="py-3.5 px-4 text-center">Descripción</th>
+                <th class="py-3.5 px-4 text-center">Fecha</th>
+                <th class="py-3.5 px-4 text-center">Otros</th>
+                <th class="py-3.5 px-4 text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="patrimonialesTableBody" class="divide-y divide-slate-100 text-sm"></tbody>
+          </table>
+        </div>
+        
+      </div>
+    </div>
+
   </div>
-</div>
 
-  <!-- SCRIPT DE CONEXIÓN Y LÓGICA -->
+  <!-- MODAL CREAR/EDITAR EQUIPO -->
+  <div id="eqFormModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden border border-slate-200">
+      <div class="bg-slate-900 px-6 py-4 flex items-center justify-between text-white">
+        <h3 id="eqModalTitle" class="font-bold text-base flex items-center gap-2"><i class="fa-solid fa-computer text-indigo-400"></i> <span>Nuevo Equipo</span></h3>
+        <button onclick="cerrarEquipamientoModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <form id="eqForm" onsubmit="saveEquipamiento(event)">
+        <input type="hidden" id="editEqId">
+        <div class="p-6 space-y-4 text-slate-700 text-sm max-h-[75vh] overflow-y-auto">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Área *</label>
+              <select id="eqArea" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
+                <option value="">Seleccionar Área...</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Tipo de Equipo *</label>
+              <select id="eqTipo" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
+                <option value="PC">PC</option>
+                <option value="Monitor">Monitor</option>
+                <option value="Impresora">Impresora</option>
+                <option value="Periferico">Periférico</option>
+                <option value="UPS">UPS</option>
+                <option value="Otros">Otros</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Descripción *</label>
+            <input type="text" id="eqDescripcion" required placeholder="Ej: PC Escritorio Intel Core i5" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Propietario (opcional)</label>
+              <input type="text" id="eqPropietario" placeholder="Ej: Concejal / Área" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">N° Patrimonial (opcional)</label>
+              <input type="text" id="eqPatrimonial" placeholder="Ej: PAT-00412" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Condición</label>
+              <select id="eqCondicion" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
+                <option value="Nuevo">Nuevo</option>
+                <option value="Antiguo">Antiguo</option>
+                <option value="Actualizado">Actualizado</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Actualizable</label>
+              <select id="eqActualizable" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
+                <option value="Si">Sí</option>
+                <option value="No">No</option>
+                <option value="Puede esperar">Puede esperar</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Usuario / Nombre de equipo (opcional)</label>
+            <input type="text" id="eqUsuario" placeholder="Ej: Juan Pérez" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Notas u Observaciones (opcional)</label>
+            <textarea id="eqNotas" rows="2" placeholder="Detalles..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none"></textarea>
+          </div>
+        </div>
+        <div class="bg-slate-50 px-6 py-3.5 border-t border-slate-100 flex justify-end gap-2">
+          <button type="button" onclick="cerrarEquipamientoModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold rounded-xl">Cancelar</button>
+          <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl shadow-sm">Guardar Equipo</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL CREAR/EDITAR PATRIMONIAL -->
+  <div id="patFormModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden border border-slate-200">
+      <div class="bg-slate-900 px-6 py-4 flex items-center justify-between text-white">
+        <h3 id="patModalTitle" class="font-bold text-base flex items-center gap-2"><i class="fa-solid fa-boxes-stacked text-indigo-400"></i> <span>Nuevo Bien Patrimonial</span></h3>
+        <button onclick="cerrarPatrimonialModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <form id="patForm" onsubmit="savePatrimonial(event)">
+        <input type="hidden" id="editPatId">
+        <div class="p-6 space-y-4 text-slate-700 text-sm">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Descripción *</label>
+            <input type="text" id="patDescripcion" required placeholder="Ej: Escritorio de madera oficina" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Número Patrimonial</label>
+            <input type="text" id="patNumero" placeholder="Ej: PAT-9921" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Fecha</label>
+            <input type="date" id="patFecha" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Otros</label>
+            <textarea id="patOtros" rows="2" placeholder="Observaciones adicionales..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none"></textarea>
+          </div>
+        </div>
+        <div class="bg-slate-50 px-6 py-3.5 border-t border-slate-100 flex justify-end gap-2">
+          <button type="button" onclick="cerrarPatrimonialModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold rounded-xl">Cancelar</button>
+          <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl shadow-sm">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL DETALLE EQUIPO -->
+  <div id="detailEqModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-xl overflow-hidden border border-slate-200">
+      <div class="bg-slate-900 px-6 py-4 flex items-center justify-between text-white">
+        <h3 class="font-bold text-base flex items-center gap-2"><i class="fa-solid fa-circle-info text-indigo-400"></i> Detalle del Equipo</h3>
+        <button onclick="document.getElementById('detailEqModal').classList.add('hidden')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <div class="p-6 space-y-4 text-slate-700 text-sm">
+        <div class="grid grid-cols-2 gap-4 bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+          <div><strong class="text-[10px] text-slate-400 block uppercase">Área:</strong> <span id="detArea" class="font-semibold text-slate-800">-</span></div>
+          <div><strong class="text-[10px] text-slate-400 block uppercase">Tipo:</strong> <span id="detTipo" class="font-semibold text-slate-800">-</span></div>
+        </div>
+        <div><strong class="text-[10px] text-slate-400 block uppercase mb-1">Descripción:</strong> <p id="detDescripcion" class="font-medium text-base text-slate-900 bg-slate-50 p-3.5 rounded-xl border border-slate-100">-</p></div>
+        <div class="grid grid-cols-2 gap-4 bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+          <div><strong class="text-[10px] text-slate-400 block uppercase">Propietario:</strong> <span id="detPropietario" class="font-medium text-slate-800">-</span></div>
+          <div><strong class="text-[10px] text-slate-400 block uppercase">N° Patrimonial:</strong> <span id="detPatrimonial" class="font-mono font-semibold text-indigo-600">-</span></div>
+        </div>
+        <div class="grid grid-cols-3 gap-2 bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-center">
+          <div><strong class="text-[9px] text-slate-400 block uppercase">Condición:</strong> <span id="detCondicion" class="font-bold text-slate-700">-</span></div>
+          <div><strong class="text-[9px] text-slate-400 block uppercase">Actualizable:</strong> <span id="detActualizable" class="font-bold text-slate-700">-</span></div>
+          <div><strong class="text-[9px] text-slate-400 block uppercase">Usuario:</strong> <span id="detUsuario" class="font-bold text-indigo-600">-</span></div>
+        </div>
+        <div><strong class="text-[10px] text-slate-400 block uppercase mb-1">Notas / Observaciones:</strong> <p id="detNotas" class="text-slate-600 bg-slate-50 p-3.5 rounded-xl border border-slate-100 italic">-</p></div>
+      </div>
+      <div class="bg-slate-50 px-6 py-3.5 border-t border-slate-100 flex justify-end">
+        <button onclick="document.getElementById('detailEqModal').classList.add('hidden')" class="px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-semibold">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL ADMIN -->
+  <div id="modalPasswordAdmin" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden border border-slate-200">
+      <div class="bg-slate-900 px-6 py-4 flex items-center justify-between text-white">
+        <h3 class="font-bold text-sm tracking-wide uppercase flex items-center gap-2"><i class="fa-solid fa-shield-halved text-indigo-400"></i> Acceso Administrador</h3>
+        <button onclick="cerrarModalAdmin()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <div class="p-6 space-y-4">
+        <p class="text-xs text-slate-500">Ingrese la contraseña de administración para habilitar las funciones de edición.</p>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Contraseña</label>
+          <input type="password" id="inputPasswordAdmin" placeholder="••••••••" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none" onkeydown="if(event.key === 'Enter') verificarPasswordAdminSupabase()" />
+          <p id="errorPasswordMsg" class="text-rose-500 text-xs mt-1.5 hidden font-medium">Contraseña incorrecta.</p>
+        </div>
+      </div>
+      <div class="bg-slate-50 px-6 py-3.5 border-t border-slate-100 flex justify-end gap-2">
+        <button onclick="cerrarModalAdmin()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold rounded-xl">Cancelar</button>
+        <button onclick="verificarPasswordAdminSupabase()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl shadow-sm">Ingresar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT -->
   <script>
-    // ================= CREDENCIALES DE SUPABASE =================
-    const SUPABASE_URL = 'https://hwfyxwmaqpsgvjxeupnk.supabase.co'; // Reemplaza con tu URL
-    const SUPABASE_ANON_KEY = 'sb_publishable_MfPnZHNUNBT0fAbjJDzTbQ_s-2hZU2T';                // Reemplaza con tu Anon Key
+    const SUPABASE_URL = 'https://hwfyxwmaqpsgvjxeupnk.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_MfPnZHNUNBT0fAbjJDzTbQ_s-2hZU2T';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const LISTA_AREAS = [
+     const LISTA_AREAS = [
       "Presidencia",
       "Secretaría Privada",
       "Secretaría Legislativa",
@@ -336,138 +353,158 @@
     ];
 
     let equipamientoList = [];
+    let patrimonialesList = [];
+    let currentView = 'equipamiento';
     let isAdmin = false;
 
-    // Inicializar carga de datos al abrir
     document.addEventListener('DOMContentLoaded', () => {
       fetchEquipamientoFromSupabase();
+      fetchPatrimonialesFromSupabase();
+      poblarSelectsAreas();
     });
 
-    // Cargar select de Áreas en el Filtro y en el Formulario
-function poblarSelectsAreas() {
-  const selectFiltro = document.getElementById('filterArea');
-  const selectForm = document.getElementById('eqArea');
+    function switchView(view) {
+      currentView = view;
+      const btnEq = document.getElementById('tabBtnEquipamiento');
+      const btnPat = document.getElementById('tabBtnPatrimoniales');
+      const viewEq = document.getElementById('viewEquipamiento');
+      const viewPat = document.getElementById('viewPatrimoniales');
 
-  // Si hay áreas personalizadas en la BD que no están en la lista fija, las sumamos dinámicamente
-  const areasExistentes = equipamientoList.map(item => item.area).filter(Boolean);
-  const todasLasAreas = [...new Set([...LISTA_AREAS, ...areasExistentes])].sort();
-
-  // Opciones para el Filtro de la Tabla
-  if (selectFiltro) {
-    selectFiltro.innerHTML = '<option value="">Todas las Áreas</option>' + 
-      todasLasAreas.map(a => `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`).join('');
-  }
-
-  // Opciones para el Formulario (Nuevo/Editar)
-  if (selectForm) {
-    selectForm.innerHTML = '<option value="">Seleccionar Área...</option>' + 
-      todasLasAreas.map(a => `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`).join('');
-  }
-}
-
-// Llamar a la función al obtener los datos de Supabase
-async function fetchEquipamientoFromSupabase() {
-  try {
-    const { data, error } = await supabaseClient
-      .from('equipamiento')
-      .select('*')
-      .order('area', { ascending: true });
-
-    if (error) throw error;
-    equipamientoList = data || [];
-    
-    poblarSelectsAreas(); // <--- Actualiza ambos selects
-    renderEquipamientoTable();
-  } catch (err) {
-    console.error("Error al obtener equipamiento:", err);
-  }
-}
-
-    // Poblar selector dinámico de áreas
-    function poblarFiltroAreas() {
-      const selectArea = document.getElementById('filterArea');
-      if (!selectArea) return;
-      
-      const areasUnicas = [...new Set(equipamientoList.map(item => item.area))].filter(Boolean).sort();
-      selectArea.innerHTML = '<option value="">Todas las Áreas</option>' + 
-        areasUnicas.map(a => `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`).join('');
+      if (view === 'equipamiento') {
+        btnEq.className = "px-4 py-2.5 bg-indigo-600 text-white text-xs font-bold rounded-xl transition-colors shadow-sm flex items-center gap-2";
+        btnPat.className = "px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors flex items-center gap-2";
+        viewEq.classList.remove('hidden');
+        viewPat.classList.add('hidden');
+      } else {
+        btnPat.className = "px-4 py-2.5 bg-indigo-600 text-white text-xs font-bold rounded-xl transition-colors shadow-sm flex items-center gap-2";
+        btnEq.className = "px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors flex items-center gap-2";
+        viewPat.classList.remove('hidden');
+        viewEq.classList.add('hidden');
+      }
+      actualizarInterfazAdmin();
     }
 
-    // Renderizar tabla con filtros combinados
+    // --- EQUIPAMIENTO ---
+    async function fetchEquipamientoFromSupabase() {
+      try {
+        const { data, error } = await supabaseClient.from('equipamiento').select('*').order('area', { ascending: true });
+        if (error) throw error;
+        equipamientoList = data || [];
+        poblarSelectsAreas();
+        renderEquipamientoTable();
+      } catch (err) { console.error("Error equipamiento:", err); }
+    }
+
+    function poblarSelectsAreas() {
+      const selectFiltro = document.getElementById('filterArea');
+      const selectForm = document.getElementById('eqArea');
+      const areasExistentes = equipamientoList.map(item => item.area).filter(Boolean);
+      const todasLasAreas = [...new Set([...LISTA_AREAS, ...areasExistentes])].sort();
+
+      if (selectFiltro) selectFiltro.innerHTML = '<option value="">Todas las Áreas</option>' + todasLasAreas.map(a => `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`).join('');
+      if (selectForm) selectForm.innerHTML = '<option value="">Seleccionar Área...</option>' + todasLasAreas.map(a => `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`).join('');
+    }
+
     function renderEquipamientoTable() {
-  const tbody = document.getElementById('equipamientoTableBody');
-  if (!tbody) return;
+      const tbody = document.getElementById('equipamientoTableBody');
+      if (!tbody) return;
+      const termino = (document.getElementById('eqSearchInput')?.value || '').toLowerCase().trim();
+      const fArea = document.getElementById('filterArea')?.value || '';
+      const fTipo = document.getElementById('filterTipo')?.value || '';
+      const fCondicion = document.getElementById('filterCondicion')?.value || '';
+      const fActualizable = document.getElementById('filterActualizable')?.value || '';
 
-  const termino = (document.getElementById('eqSearchInput')?.value || '').toLowerCase().trim();
-  const fArea = document.getElementById('filterArea')?.value || '';
-  const fTipo = document.getElementById('filterTipo')?.value || '';
-  const fCondicion = document.getElementById('filterCondicion')?.value || '';
-  const fActualizable = document.getElementById('filterActualizable')?.value || '';
+      const filtrados = equipamientoList.filter(item => {
+        const matchTerm = !termino || (item.descripcion && item.descripcion.toLowerCase().includes(termino)) || (item.usuario_equipo && item.usuario_equipo.toLowerCase().includes(termino)) || (item.num_patrimonial && item.num_patrimonial.toLowerCase().includes(termino)) || (item.propietario && item.propietario.toLowerCase().includes(termino));
+        return matchTerm && (!fArea || item.area === fArea) && (!fTipo || item.tipo === fTipo) && (!fCondicion || item.condicion === fCondicion) && (!fActualizable || item.actualizable === fActualizable);
+      });
 
-  const filtrados = equipamientoList.filter(item => {
-    const matchTermino = !termino || 
-      (item.descripcion && item.descripcion.toLowerCase().includes(termino)) ||
-      (item.usuario_equipo && item.usuario_equipo.toLowerCase().includes(termino)) ||
-      (item.num_patrimonial && item.num_patrimonial.toLowerCase().includes(termino)) ||
-      (item.propietario && item.propietario.toLowerCase().includes(termino));
+      document.getElementById('eqCount').innerText = filtrados.length;
+      if (filtrados.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400 text-sm">No se encontraron equipos registrados.</td></tr>`;
+        return;
+      }
 
-    const matchArea = !fArea || item.area === fArea;
-    const matchTipo = !fTipo || item.tipo === fTipo;
-    const matchCondicion = !fCondicion || item.condicion === fCondicion;
-    const matchActualizable = !fActualizable || item.actualizable === fActualizable;
+      tbody.innerHTML = filtrados.map(item => `
+        <tr class="hover:bg-slate-50/80 transition-colors">
+          <td class="py-3 px-4 font-semibold text-slate-800 text-center">${escapeHtml(item.area || '-')}</td>
+          <td class="py-3 px-4 text-slate-800">
+            <div class="font-medium">${escapeHtml(item.descripcion)}</div>
+            ${item.usuario_equipo ? `<span class="text-xs text-indigo-600 font-semibold"><i class="fa-solid fa-user text-[10px]"></i> ${escapeHtml(item.usuario_equipo)}</span>` : ''}
+          </td>
+          <td class="py-3 px-4 text-slate-600 text-center">${escapeHtml(item.propietario || '-')}</td>
+          <td class="py-3 px-4 font-mono text-xs text-slate-600 text-center">${escapeHtml(item.num_patrimonial || '-')}</td>
+          <td class="py-3 px-4 text-center whitespace-nowrap">
+            <div class="flex items-center justify-center gap-1.5">
+              <button onclick="openDetailModal('${item.id}')" title="Ver Detalle" class="p-1.5 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg"><i class="fa-solid fa-eye"></i></button>
+              ${isAdmin ? `
+                <button onclick="openEditEquipamientoModal('${item.id}')" title="Editar" class="p-1.5 text-slate-600 hover:text-amber-600 hover:bg-amber-50 rounded-lg"><i class="fa-solid fa-pen-to-square"></i></button>
+                <button onclick="deleteEquipamiento('${item.id}')" title="Eliminar" class="p-1.5 text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded-lg"><i class="fa-solid fa-trash"></i></button>
+              ` : ''}
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
 
-    return matchTermino && matchArea && matchTipo && matchCondicion && matchActualizable;
-  });
+    function openEquipamientoModal() {
+      document.getElementById('editEqId').value = '';
+      document.getElementById('eqModalTitle').innerHTML = '<i class="fa-solid fa-computer text-indigo-400"></i> <span>Nuevo Equipo</span>';
+      document.getElementById('eqForm').reset();
+      document.getElementById('eqArea').value = '';
+      document.getElementById('eqFormModal').classList.remove('hidden');
+    }
 
-  document.getElementById('eqCount').innerText = filtrados.length;
+    function openEditEquipamientoModal(id) {
+      const item = equipamientoList.find(e => e.id === id);
+      if (!item) return;
+      document.getElementById('editEqId').value = item.id;
+      document.getElementById('eqModalTitle').innerHTML = '<i class="fa-solid fa-pen-to-square text-indigo-400"></i> <span>Editar Equipo</span>';
+      document.getElementById('eqArea').value = item.area || '';
+      document.getElementById('eqTipo').value = item.tipo || 'PC';
+      document.getElementById('eqDescripcion').value = item.descripcion || '';
+      document.getElementById('eqPropietario').value = item.propietario || '';
+      document.getElementById('eqPatrimonial').value = item.num_patrimonial || '';
+      document.getElementById('eqCondicion').value = item.condicion || 'Nuevo';
+      document.getElementById('eqActualizable').value = item.actualizable || 'Si';
+      document.getElementById('eqUsuario').value = item.usuario_equipo || '';
+      document.getElementById('eqNotas').value = item.notas || '';
+      document.getElementById('eqFormModal').classList.remove('hidden');
+    }
 
-  if (filtrados.length === 0) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="5" class="py-8 text-center text-slate-400 text-sm">
-          No se encontraron equipos registrados que coincidan con los filtros.
-        </td>
-      </tr>
-    `;
-    return;
-  }
+    function cerrarEquipamientoModal() { document.getElementById('eqFormModal').classList.add('hidden'); }
 
-  tbody.innerHTML = filtrados.map(item => `
-    <tr class="hover:bg-slate-50/80 transition-colors">
-      <td class="py-3 px-4 font-semibold text-slate-800 text-center">${escapeHtml(item.area || '-')}</td>
-      <td class="py-3 px-4 text-slate-800">
-        <div class="font-medium">${escapeHtml(item.descripcion)}</div>
-        ${item.usuario_equipo ? `<span class="text-xs text-indigo-600 font-semibold"><i class="fa-solid fa-user text-[10px]"></i> ${escapeHtml(item.usuario_equipo)}</span>` : ''}
-      </td>
-      <td class="py-3 px-4 text-slate-600 text-center">${escapeHtml(item.propietario || '-')}</td>
-      <td class="py-3 px-4 font-mono text-xs text-slate-600 text-center">${escapeHtml(item.num_patrimonial || '-')}</td>
-      <td class="py-3 px-4 text-center whitespace-nowrap">
-        <div class="flex items-center justify-center gap-1.5">
-          <!-- Botón Ver Detalle (Público) -->
-          <button onclick="openDetailModal('${item.id}')" title="Ver Detalle Completo" class="p-1.5 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
-            <i class="fa-solid fa-eye"></i>
-          </button>
-          
-          <!-- Botones Editar y Eliminar (Solo Admin) -->
-          ${isAdmin ? `
-            <button onclick="openEditEquipamientoModal('${item.id}')" title="Editar Equipo" class="p-1.5 text-slate-600 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors">
-              <i class="fa-solid fa-pen-to-square"></i>
-            </button>
-            <button onclick="deleteEquipamiento('${item.id}')" title="Eliminar Equipo" class="p-1.5 text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors">
-              <i class="fa-solid fa-trash"></i>
-            </button>
-          ` : ''}
-        </div>
-      </td>
-    </tr>
-  `).join('');
-}
+    async function saveEquipamiento(e) {
+      e.preventDefault();
+      const id = document.getElementById('editEqId').value;
+      const payload = {
+        area: document.getElementById('eqArea').value.trim(),
+        tipo: document.getElementById('eqTipo').value,
+        descripcion: document.getElementById('eqDescripcion').value.trim(),
+        propietario: document.getElementById('eqPropietario').value.trim() || null,
+        num_patrimonial: document.getElementById('eqPatrimonial').value.trim() || null,
+        condicion: document.getElementById('eqCondicion').value,
+        actualizable: document.getElementById('eqActualizable').value,
+        usuario_equipo: document.getElementById('eqUsuario').value.trim() || null,
+        notas: document.getElementById('eqNotas').value.trim() || null
+      };
+      try {
+        const res = id ? await supabaseClient.from('equipamiento').update(payload).eq('id', id) : await supabaseClient.from('equipamiento').insert([payload]);
+        if (res.error) throw res.error;
+        cerrarEquipamientoModal();
+        fetchEquipamientoFromSupabase();
+      } catch (err) { alert("Error al guardar equipo."); }
+    }
 
-    // Modal de Detalles
+    async function deleteEquipamiento(id) {
+      if (!confirm("¿Eliminar este equipo?")) return;
+      const { error } = await supabaseClient.from('equipamiento').delete().eq('id', id);
+      if (!error) fetchEquipamientoFromSupabase();
+    }
+
     function openDetailModal(id) {
       const item = equipamientoList.find(e => e.id === id);
       if (!item) return;
-
       document.getElementById('detArea').innerText = item.area || '-';
       document.getElementById('detTipo').innerText = item.tipo || '-';
       document.getElementById('detDescripcion').innerText = item.descripcion || '-';
@@ -476,18 +513,108 @@ async function fetchEquipamientoFromSupabase() {
       document.getElementById('detCondicion').innerText = item.condicion || '-';
       document.getElementById('detActualizable').innerText = item.actualizable || '-';
       document.getElementById('detUsuario').innerText = item.usuario_equipo || '-';
-      document.getElementById('detNotas').innerText = item.notas || 'Sin notas registradas.';
-
+      document.getElementById('detNotas').innerText = item.notas || 'Sin notas.';
       document.getElementById('detailEqModal').classList.remove('hidden');
     }
 
-    // Control de Sesión Admin (contra la tabla config_admin de Supabase)
+    // --- PATRIMONIALES ---
+    async function fetchPatrimonialesFromSupabase() {
+      try {
+        const { data, error } = await supabaseClient.from('patrimoniales').select('*').order('descripcion', { ascending: true });
+        if (error) throw error;
+        patrimonialesList = data || [];
+        renderPatrimonialesTable();
+      } catch (err) { console.error("Error patrimoniales:", err); }
+    }
+
+    function renderPatrimonialesTable() {
+      const tbody = document.getElementById('patrimonialesTableBody');
+      if (!tbody) return;
+      const termino = (document.getElementById('patSearchInput')?.value || '').toLowerCase().trim();
+
+      const filtrados = patrimonialesList.filter(item => {
+        return !termino || 
+          (item.descripcion && item.descripcion.toLowerCase().includes(termino)) ||
+          (item.numero_patrimonial && item.numero_patrimonial.toLowerCase().includes(termino)) ||
+          (item.otros && item.otros.toLowerCase().includes(termino));
+      });
+
+      document.getElementById('patCount').innerText = filtrados.length;
+      if (filtrados.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400 text-sm">No se encontraron bienes patrimoniales registrados.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtrados.map(item => `
+        <tr class="hover:bg-slate-50/80 transition-colors">
+          <td class="py-3 px-4 font-mono text-xs text-slate-700 text-center">${escapeHtml(item.numero_patrimonial || '-')}</td>
+          <td class="py-3 px-4 font-medium text-slate-800">${escapeHtml(item.descripcion)}</td>
+          <td class="py-3 px-4 text-slate-600 text-center">${escapeHtml(item.fecha || '-')}</td>
+          <td class="py-3 px-4 text-slate-600 text-center">${escapeHtml(item.otros || '-')}</td>
+          <td class="py-3 px-4 text-center whitespace-nowrap">
+            ${isAdmin ? `
+              <div class="flex items-center justify-center gap-1.5">
+                <button onclick="openEditPatrimonialModal('${item.id}')" title="Editar" class="p-1.5 text-slate-600 hover:text-amber-600 hover:bg-amber-50 rounded-lg"><i class="fa-solid fa-pen-to-square"></i></button>
+                <button onclick="deletePatrimonial('${item.id}')" title="Eliminar" class="p-1.5 text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded-lg"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            ` : '<span class="text-xs text-slate-400">-</span>'}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openPatrimonialModal() {
+      document.getElementById('editPatId').value = '';
+      document.getElementById('patModalTitle').innerHTML = '<i class="fa-solid fa-boxes-stacked text-indigo-400"></i> <span>Nuevo Bien Patrimonial</span>';
+      document.getElementById('patForm').reset();
+      document.getElementById('patFormModal').classList.remove('hidden');
+    }
+
+    function openEditPatrimonialModal(id) {
+      const item = patrimonialesList.find(p => p.id === id);
+      if (!item) return;
+      document.getElementById('editPatId').value = item.id;
+      document.getElementById('patModalTitle').innerHTML = '<i class="fa-solid fa-pen-to-square text-indigo-400"></i> <span>Editar Bien Patrimonial</span>';
+      document.getElementById('patDescripcion').value = item.descripcion || '';
+      document.getElementById('patNumero').value = item.numero_patrimonial || '';
+      document.getElementById('patFecha').value = item.fecha || '';
+      document.getElementById('patOtros').value = item.otros || '';
+      document.getElementById('patFormModal').classList.remove('hidden');
+    }
+
+    function cerrarPatrimonialModal() { document.getElementById('patFormModal').classList.add('hidden'); }
+
+    async function savePatrimonial(e) {
+      e.preventDefault();
+      const id = document.getElementById('editPatId').value;
+      const payload = {
+        descripcion: document.getElementById('patDescripcion').value.trim(),
+        numero_patrimonial: document.getElementById('patNumero').value.trim() || null,
+        fecha: document.getElementById('patFecha').value || null,
+        otros: document.getElementById('patOtros').value.trim() || null
+      };
+      try {
+        const res = id ? await supabaseClient.from('patrimoniales').update(payload).eq('id', id) : await supabaseClient.from('patrimoniales').insert([payload]);
+        if (res.error) throw res.error;
+        cerrarPatrimonialModal();
+        fetchPatrimonialesFromSupabase();
+      } catch (err) { alert("Error al guardar bien patrimonial."); }
+    }
+
+    async function deletePatrimonial(id) {
+      if (!confirm("¿Eliminar este bien patrimonial?")) return;
+      const { error } = await supabaseClient.from('patrimoniales').delete().eq('id', id);
+      if (!error) fetchPatrimonialesFromSupabase();
+    }
+
+    // --- ADMIN ---
     function abrirModalAdmin() {
       if (isAdmin) {
-        if (confirm("¿Desea cerrar la sesión de administrador?")) {
+        if (confirm("¿Cerrar sesión de administrador?")) {
           isAdmin = false;
           actualizarInterfazAdmin();
           renderEquipamientoTable();
+          renderPatrimonialesTable();
         }
       } else {
         document.getElementById('inputPasswordAdmin').value = '';
@@ -497,148 +624,49 @@ async function fetchEquipamientoFromSupabase() {
       }
     }
 
-    function cerrarModalAdmin() {
-      document.getElementById('modalPasswordAdmin').classList.add('hidden');
-    }
+    function cerrarModalAdmin() { document.getElementById('modalPasswordAdmin').classList.add('hidden'); }
 
     async function verificarPasswordAdminSupabase() {
-      const passIngresada = document.getElementById('inputPasswordAdmin').value.trim();
-      const errorMsg = document.getElementById('errorPasswordMsg');
-      if (!passIngresada) return;
-
+      const pass = document.getElementById('inputPasswordAdmin').value.trim();
+      if (!pass) return;
       try {
-        const { data, error } = await supabaseClient
-          .from('config_admin')
-          .select('clave')
-          .eq('clave', passIngresada)
-          .limit(1);
-
+        const { data, error } = await supabaseClient.from('config_admin').select('clave').eq('clave', pass).limit(1);
         if (error) throw error;
-
         if (data && data.length > 0) {
           isAdmin = true;
           cerrarModalAdmin();
           actualizarInterfazAdmin();
           renderEquipamientoTable();
+          renderPatrimonialesTable();
         } else {
-          errorMsg.classList.remove('hidden');
-          document.getElementById('inputPasswordAdmin').focus();
+          document.getElementById('errorPasswordMsg').classList.remove('hidden');
         }
-      } catch (err) {
-        console.error("Error al validar clave de administración:", err);
-        alert("Ocurrió un error al verificar la contraseña.");
+      } catch (err) { alert("Error al validar contraseña."); }
+    }
+
+    function actualizarInterfazAdmin() {
+      const btnTexto = document.getElementById('textoAdminBtn');
+      const btnAcceso = document.getElementById('btnAdminAcceso');
+      const eqContainer = document.getElementById('eqAdminActionContainer');
+      const patContainer = document.getElementById('patAdminActionContainer');
+
+      if (isAdmin) {
+        btnTexto.innerText = 'Modo Admin (Activo)';
+        btnAcceso.className = 'px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition-colors flex items-center gap-2 shadow-sm';
+        if (currentView === 'equipamiento') {
+          eqContainer.innerHTML = `<button onclick="openEquipamientoModal()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-xl shadow-sm transition-colors flex items-center gap-2"><i class="fa-solid fa-plus text-xs"></i><span>Nuevo Equipo</span></button>`;
+          patContainer.innerHTML = '';
+        } else {
+          patContainer.innerHTML = `<button onclick="openPatrimonialModal()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-xl shadow-sm transition-colors flex items-center gap-2"><i class="fa-solid fa-plus text-xs"></i><span>Nuevo Patrimonial</span></button>`;
+          eqContainer.innerHTML = '';
+        }
+      } else {
+        btnTexto.innerText = 'Modo Visualizador';
+        btnAcceso.className = 'px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition-colors flex items-center gap-2 shadow-sm';
+        eqContainer.innerHTML = '';
+        patContainer.innerHTML = '';
       }
     }
-
-    // Actualizar la función actualizarInterfazAdmin para que el botón invoque openEquipamientoModal()
-function actualizarInterfazAdmin() {
-  const btnTexto = document.getElementById('textoAdminBtn');
-  const btnAcceso = document.getElementById('btnAdminAcceso');
-  const container = document.getElementById('eqAdminActionContainer');
-
-  if (isAdmin) {
-    if (btnTexto) btnTexto.innerText = 'Modo Administrador (Activo)';
-    if (btnAcceso) btnAcceso.className = 'px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition-colors flex items-center gap-2 shadow-sm';
-    if (container) {
-      container.innerHTML = `<button onclick="openEquipamientoModal()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-xl shadow-sm transition-colors flex items-center gap-2"><i class="fa-solid fa-plus text-xs"></i><span>Nuevo Equipo</span></button>`;
-    }
-  } else {
-    if (btnTexto) btnTexto.innerText = 'Modo Visualizador';
-    if (btnAcceso) btnAcceso.className = 'px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition-colors flex items-center gap-2 shadow-sm';
-    if (container) {
-      container.innerHTML = '';
-    }
-  }
-}
-
-// Abrir modal para NUEVO equipo
-function openEquipamientoModal() {
-  document.getElementById('editEqId').value = '';
-  document.getElementById('eqModalTitle').innerHTML = '<i class="fa-solid fa-computer text-indigo-400"></i> <span>Nuevo Equipo</span>';
-  
-  // Resetea todo el formulario en general
-  document.getElementById('eqForm').reset();
-  
-  // ASEGÚRATE DE ESTO: Forzar el select de área a la opción vacía inicial
-  document.getElementById('eqArea').value = '';
-
-  document.getElementById('eqFormModal').classList.remove('hidden');
-}
-
-// Abrir modal para EDITAR equipo existente
-function openEditEquipamientoModal(id) {
-  const item = equipamientoList.find(e => e.id === id);
-  if (!item) return;
-
-  document.getElementById('editEqId').value = item.id;
-  document.getElementById('eqModalTitle').innerHTML = '<i class="fa-solid fa-pen-to-square text-indigo-400"></i> <span>Editar Equipo</span>';
-  
-  document.getElementById('eqArea').value = item.area || '';
-  document.getElementById('eqTipo').value = item.tipo || 'PC';
-  document.getElementById('eqDescripcion').value = item.descripcion || '';
-  document.getElementById('eqPropietario').value = item.propietario || '';
-  document.getElementById('eqPatrimonial').value = item.num_patrimonial || '';
-  document.getElementById('eqCondicion').value = item.condicion || 'Nuevo';
-  document.getElementById('eqActualizable').value = item.actualizable || 'Si';
-  document.getElementById('eqUsuario').value = item.usuario_equipo || '';
-  document.getElementById('eqNotas').value = item.notas || '';
-
-  document.getElementById('eqFormModal').classList.remove('hidden');
-}
-
-function cerrarEquipamientoModal() {
-  document.getElementById('eqFormModal').classList.add('hidden');
-}
-
-// Guardar (Insertar o Actualizar en Supabase)
-async function saveEquipamiento(e) {
-  e.preventDefault();
-
-  const id = document.getElementById('editEqId').value;
-
-  const payload = {
-    area: document.getElementById('eqArea').value.trim(),
-    tipo: document.getElementById('eqTipo').value,
-    descripcion: document.getElementById('eqDescripcion').value.trim(),
-    propietario: document.getElementById('eqPropietario').value.trim() || null,
-    num_patrimonial: document.getElementById('eqPatrimonial').value.trim() || null,
-    condicion: document.getElementById('eqCondicion').value,
-    actualizable: document.getElementById('eqActualizable').value,
-    usuario_equipo: document.getElementById('eqUsuario').value.trim() || null,
-    notas: document.getElementById('eqNotas').value.trim() || null
-  };
-
-  try {
-    let result;
-    if (id) {
-      result = await supabaseClient.from('equipamiento').update(payload).eq('id', id);
-    } else {
-      result = await supabaseClient.from('equipamiento').insert([payload]);
-    }
-
-    if (result.error) throw result.error;
-
-    cerrarEquipamientoModal();
-    fetchEquipamientoFromSupabase();
-  } catch (err) {
-    console.error("Error al guardar equipo:", err);
-    alert("Ocurrió un error al guardar el registro en Supabase. Revisa la consola para más detalles.");
-  }
-}
-
-// Eliminar equipo (para cuando seas Admin)
-async function deleteEquipamiento(id) {
-  if (!confirm("¿Estás seguro de que deseas eliminar este equipo del inventario?")) return;
-
-  try {
-    const { error } = await supabaseClient.from('equipamiento').delete().eq('id', id);
-    if (error) throw error;
-    fetchEquipamientoFromSupabase();
-  } catch (err) {
-    console.error("Error al eliminar equipo:", err);
-    alert("Ocurrió un error al intentar eliminar el registro.");
-  }
-}
 
     function escapeHtml(str) {
       return (str || '').replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
