@@ -24,7 +24,7 @@
           <span>INVENTARIO Y EQUIPAMIENTO</span>
         </h2>
         <p class="text-xs sm:text-sm text-slate-500 font-medium">
-          Control y gestión del parque informático del Concejo Municipal
+          Sistemas e Informática del Concejo Municipal
         </p>
       </div>
 
@@ -220,9 +220,12 @@
         <!-- Fila 1: Área y Tipo -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Área *</label>
-            <input type="text" id="eqArea" required placeholder="Ej: Presidencia, Sistemas, Comisiones..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
-          </div>
+  <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Área *</label>
+  <select id="eqArea" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
+    <option value="">Seleccionar Área...</option>
+    <!-- Se puebla dinámicamente o puedes poner las opciones estáticas aquí -->
+  </select>
+</div>
           <div>
             <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Tipo de Equipo *</label>
             <select id="eqTipo" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
@@ -305,6 +308,33 @@
     const SUPABASE_ANON_KEY = 'sb_publishable_MfPnZHNUNBT0fAbjJDzTbQ_s-2hZU2T';                // Reemplaza con tu Anon Key
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    const LISTA_AREAS = [
+      "Presidencia",
+      "Secretaría Privada",
+      "Secretaría Legislativa",
+      "Of.21(Coronado)",
+      "Of.20(Hercigonja)",
+      "Of.19(Villalba)",
+      "Of.5(Pérez)",
+      "Digesto",
+      "Asesoría Letrada",
+      "Mesa de Entrada",
+      "Biblioteca",
+      "Prensa",
+      "Of.3(Aguirre)",
+      "Of.7(Wallace)",
+      "Of.6(Totonelli)",
+      "Of.4(Ferreyra)",
+      "Of.11(Ferrari)",
+      "Of.8 (Echenique)",
+      "Despacho",
+      "Coordinación",
+      "Asesoría Contable",
+      "Sistemas",
+      "Sistemas stock/sin asignar",
+      "Sistemas en Edificio"
+    ];
+
     let equipamientoList = [];
     let isAdmin = false;
 
@@ -313,23 +343,45 @@
       fetchEquipamientoFromSupabase();
     });
 
-    // Cargar equipos desde Supabase
-    async function fetchEquipamientoFromSupabase() {
-      try {
-        const { data, error } = await supabaseClient
-          .from('equipamiento')
-          .select('*')
-          .order('area', { ascending: true });
+    // Cargar select de Áreas en el Filtro y en el Formulario
+function poblarSelectsAreas() {
+  const selectFiltro = document.getElementById('filterArea');
+  const selectForm = document.getElementById('eqArea');
 
-        if (error) throw error;
-        equipamientoList = data || [];
-        
-        poblarFiltroAreas();
-        renderEquipamientoTable();
-      } catch (err) {
-        console.error("Error al obtener equipamiento:", err);
-      }
-    }
+  // Si hay áreas personalizadas en la BD que no están en la lista fija, las sumamos dinámicamente
+  const areasExistentes = equipamientoList.map(item => item.area).filter(Boolean);
+  const todasLasAreas = [...new Set([...LISTA_AREAS, ...areasExistentes])].sort();
+
+  // Opciones para el Filtro de la Tabla
+  if (selectFiltro) {
+    selectFiltro.innerHTML = '<option value="">Todas las Áreas</option>' + 
+      todasLasAreas.map(a => `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`).join('');
+  }
+
+  // Opciones para el Formulario (Nuevo/Editar)
+  if (selectForm) {
+    selectForm.innerHTML = '<option value="">Seleccionar Área...</option>' + 
+      todasLasAreas.map(a => `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`).join('');
+  }
+}
+
+// Llamar a la función al obtener los datos de Supabase
+async function fetchEquipamientoFromSupabase() {
+  try {
+    const { data, error } = await supabaseClient
+      .from('equipamiento')
+      .select('*')
+      .order('area', { ascending: true });
+
+    if (error) throw error;
+    equipamientoList = data || [];
+    
+    poblarSelectsAreas(); // <--- Actualiza ambos selects
+    renderEquipamientoTable();
+  } catch (err) {
+    console.error("Error al obtener equipamiento:", err);
+  }
+}
 
     // Poblar selector dinámico de áreas
     function poblarFiltroAreas() {
@@ -503,7 +555,13 @@ function actualizarInterfazAdmin() {
 function openEquipamientoModal() {
   document.getElementById('editEqId').value = '';
   document.getElementById('eqModalTitle').innerHTML = '<i class="fa-solid fa-computer text-indigo-400"></i> <span>Nuevo Equipo</span>';
+  
+  // Resetea todo el formulario en general
   document.getElementById('eqForm').reset();
+  
+  // ASEGÚRATE DE ESTO: Forzar el select de área a la opción vacía inicial
+  document.getElementById('eqArea').value = '';
+
   document.getElementById('eqFormModal').classList.remove('hidden');
 }
 
