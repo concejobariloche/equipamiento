@@ -197,6 +197,107 @@
     </div>
   </div>
 
+  <!-- ================= MODAL CREAR / EDITAR EQUIPO ================= -->
+<div id="eqFormModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden border border-slate-200 transform transition-all">
+    
+    <!-- Header del Modal -->
+    <div class="bg-slate-900 px-6 py-4 flex items-center justify-between text-white">
+      <h3 id="eqModalTitle" class="font-bold text-base flex items-center gap-2">
+        <i class="fa-solid fa-computer text-indigo-400"></i> <span>Nuevo Equipo</span>
+      </h3>
+      <button onclick="cerrarEquipamientoModal()" class="text-slate-400 hover:text-white transition-colors">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+    </div>
+
+    <!-- Formulario -->
+    <form id="eqForm" onsubmit="saveEquipamiento(event)">
+      <input type="hidden" id="editEqId">
+      
+      <div class="p-6 space-y-4 text-slate-700 text-sm max-h-[75vh] overflow-y-auto">
+        
+        <!-- Fila 1: Área y Tipo -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Área *</label>
+            <input type="text" id="eqArea" required placeholder="Ej: Presidencia, Sistemas, Comisiones..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Tipo de Equipo *</label>
+            <select id="eqTipo" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
+              <option value="PC">PC</option>
+              <option value="Monitor">Monitor</option>
+              <option value="Impresora">Impresora</option>
+              <option value="Periferico">Periférico</option>
+              <option value="UPS">UPS</option>
+              <option value="Otros">Otros</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Descripción -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Descripción *</label>
+          <input type="text" id="eqDescripcion" required placeholder="Ej: PC Escritorio Intel Core i5 / Monitor 24 pulgadas" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
+        </div>
+
+        <!-- Fila 2: Propietario y N° Patrimonial -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Propietario (opcional)</label>
+            <input type="text" id="eqPropietario" placeholder="Ej: Concejal / Área / Municipio" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">N° Patrimonial (opcional)</label>
+            <input type="text" id="eqPatrimonial" placeholder="Ej: PAT-00412" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
+          </div>
+        </div>
+
+        <!-- Fila 3: Condición y Actualizable -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Condición</label>
+            <select id="eqCondicion" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
+              <option value="Nuevo">Nuevo</option>
+              <option value="Antiguo">Antiguo</option>
+              <option value="Actualizado">Actualizado</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Actualizable</label>
+            <select id="eqActualizable" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
+              <option value="Si">Sí</option>
+              <option value="No">No</option>
+              <option value="Puede esperar">Puede esperar</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Usuario / Nombre de equipo -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Usuario / Nombre de equipo (opcional)</label>
+          <input type="text" id="eqUsuario" placeholder="Ej: Juan Pérez / PC-LEGAJO-12" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
+        </div>
+
+        <!-- Notas -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Notas u Observaciones (opcional)</label>
+          <textarea id="eqNotas" rows="2" placeholder="Detalles técnicos adicionales..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none"></textarea>
+        </div>
+
+      </div>
+
+      <!-- Footer / Botones -->
+      <div class="bg-slate-50 px-6 py-3.5 border-t border-slate-100 flex justify-end gap-2">
+        <button type="button" onclick="cerrarEquipamientoModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold rounded-xl transition-colors">Cancelar</button>
+        <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-colors">Guardar Equipo</button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
   <!-- SCRIPT DE CONEXIÓN Y LÓGICA -->
   <script>
     // ================= CREDENCIALES DE SUPABASE =================
@@ -364,25 +465,108 @@
       }
     }
 
-    function actualizarInterfazAdmin() {
-      const btnTexto = document.getElementById('textoAdminBtn');
-      const btnAcceso = document.getElementById('btnAdminAcceso');
-      const container = document.getElementById('eqAdminActionContainer');
+    // Actualizar la función actualizarInterfazAdmin para que el botón invoque openEquipamientoModal()
+function actualizarInterfazAdmin() {
+  const btnTexto = document.getElementById('textoAdminBtn');
+  const btnAcceso = document.getElementById('btnAdminAcceso');
+  const container = document.getElementById('eqAdminActionContainer');
 
-      if (isAdmin) {
-        if (btnTexto) btnTexto.innerText = 'Modo Administrador (Activo)';
-        if (btnAcceso) btnAcceso.className = 'px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition-colors flex items-center gap-2 shadow-sm';
-        if (container) {
-          container.innerHTML = `<button class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-xl shadow-sm transition-colors flex items-center gap-2"><i class="fa-solid fa-plus text-xs"></i><span>Nuevo Equipo</span></button>`;
-        }
-      } else {
-        if (btnTexto) btnTexto.innerText = 'Modo Visualizador';
-        if (btnAcceso) btnAcceso.className = 'px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition-colors flex items-center gap-2 shadow-sm';
-        if (container) {
-          container.innerHTML = '';
-        }
-      }
+  if (isAdmin) {
+    if (btnTexto) btnTexto.innerText = 'Modo Administrador (Activo)';
+    if (btnAcceso) btnAcceso.className = 'px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition-colors flex items-center gap-2 shadow-sm';
+    if (container) {
+      container.innerHTML = `<button onclick="openEquipamientoModal()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-xl shadow-sm transition-colors flex items-center gap-2"><i class="fa-solid fa-plus text-xs"></i><span>Nuevo Equipo</span></button>`;
     }
+  } else {
+    if (btnTexto) btnTexto.innerText = 'Modo Visualizador';
+    if (btnAcceso) btnAcceso.className = 'px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition-colors flex items-center gap-2 shadow-sm';
+    if (container) {
+      container.innerHTML = '';
+    }
+  }
+}
+
+// Abrir modal para NUEVO equipo
+function openEquipamientoModal() {
+  document.getElementById('editEqId').value = '';
+  document.getElementById('eqModalTitle').innerHTML = '<i class="fa-solid fa-computer text-indigo-400"></i> <span>Nuevo Equipo</span>';
+  document.getElementById('eqForm').reset();
+  document.getElementById('eqFormModal').classList.remove('hidden');
+}
+
+// Abrir modal para EDITAR equipo existente
+function openEditEquipamientoModal(id) {
+  const item = equipamientoList.find(e => e.id === id);
+  if (!item) return;
+
+  document.getElementById('editEqId').value = item.id;
+  document.getElementById('eqModalTitle').innerHTML = '<i class="fa-solid fa-pen-to-square text-indigo-400"></i> <span>Editar Equipo</span>';
+  
+  document.getElementById('eqArea').value = item.area || '';
+  document.getElementById('eqTipo').value = item.tipo || 'PC';
+  document.getElementById('eqDescripcion').value = item.descripcion || '';
+  document.getElementById('eqPropietario').value = item.propietario || '';
+  document.getElementById('eqPatrimonial').value = item.num_patrimonial || '';
+  document.getElementById('eqCondicion').value = item.condicion || 'Nuevo';
+  document.getElementById('eqActualizable').value = item.actualizable || 'Si';
+  document.getElementById('eqUsuario').value = item.usuario_equipo || '';
+  document.getElementById('eqNotas').value = item.notas || '';
+
+  document.getElementById('eqFormModal').classList.remove('hidden');
+}
+
+function cerrarEquipamientoModal() {
+  document.getElementById('eqFormModal').classList.add('hidden');
+}
+
+// Guardar (Insertar o Actualizar en Supabase)
+async function saveEquipamiento(e) {
+  e.preventDefault();
+
+  const id = document.getElementById('editEqId').value;
+  const payload = {
+    area: document.getElementById('eqArea').value.trim(),
+    tipo: document.getElementById('eqTipo').value,
+    descripcion: document.getElementById('eqDescripcion').value.trim(),
+    propietario: document.getElementById('eqPropietario').value.trim(),
+    num_patrimonial: document.getElementById('eqPatrimonial').value.trim(),
+    condicion: document.getElementById('eqCondicion').value,
+    actualizable: document.getElementById('eqActualizable').value,
+    usuario_equipo: document.getElementById('eqUsuario').value.trim(),
+    notas: document.getElementById('eqNotas').value.trim()
+  };
+
+  try {
+    let result;
+    if (id) {
+      result = await supabaseClient.from('equipamiento').update(payload).eq('id', id);
+    } else {
+      result = await supabaseClient.from('equipamiento').insert([payload]);
+    }
+
+    if (result.error) throw result.error;
+
+    cerrarEquipamientoModal();
+    fetchEquipamientoFromSupabase(); // Recargar datos y refrescar la tabla
+  } catch (err) {
+    console.error("Error al guardar equipo:", err);
+    alert("Ocurrió un error al guardar el registro en Supabase.");
+  }
+}
+
+// Eliminar equipo (para cuando seas Admin)
+async function deleteEquipamiento(id) {
+  if (!confirm("¿Estás seguro de eliminar este equipo del inventario?")) return;
+
+  try {
+    const { error } = await supabaseClient.from('equipamiento').delete().eq('id', id);
+    if (error) throw error;
+    fetchEquipamientoFromSupabase();
+  } catch (err) {
+    console.error("Error al eliminar equipo:", err);
+    alert("Ocurrió un error al intentar eliminar el registro.");
+  }
+}
 
     function escapeHtml(str) {
       return (str || '').replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
